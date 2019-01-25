@@ -1,6 +1,5 @@
 /*
-   Copyright (c) 2013, The Linux Foundation. All rights reserved.
-
+   Copyright (C) 2012 The Android Open-Source Project
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
    met:
@@ -13,7 +12,6 @@
     * Neither the name of The Linux Foundation nor the names of its
       contributors may be used to endorse or promote products derived
       from this software without specific prior written permission.
-
    THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
    WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
@@ -28,14 +26,19 @@
  */
 
 #include <stdlib.h>
-#include <unistd.h>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
+#include <android-base/properties.h>
 
-#include <cutils/properties.h>
 #include "vendor_init.h"
+#include "property_service.h"
 #include "log.h"
 #include "util.h"
+#include <string>
+
+void gsm_properties();
+
+using android::base::GetProperty;
 
 void property_override(char const prop[], char const value[])
 {
@@ -48,38 +51,46 @@ void property_override(char const prop[], char const value[])
         __system_property_add(prop, strlen(prop), value, strlen(value));
 }
 
+void property_override_dual(char const system_prop[], char const vendor_prop[], char const value[])
+{
+    property_override(system_prop, value);
+    property_override(vendor_prop, value);
+}
+
 void vendor_load_properties()
 {
-    char platform[PROP_VALUE_MAX];
-    char bootloader[PROP_VALUE_MAX];
-    char device[PROP_VALUE_MAX];
-    char devicename[PROP_VALUE_MAX];
-    int rc;
+    std::string platform;
+    std::string bootloader;
 
-    rc = property_get("ro.board.platform", platform, NULL);
-    if (!rc || strncmp(platform, ANDROID_TARGET, PROP_VALUE_MAX))
+    platform = GetProperty("ro.board.platform", "");
+
+    if (platform == "")
         return;
 
-    property_get("ro.bootloader", bootloader, NULL);
+    bootloader = GetProperty("ro.bootloader", "");
 
-    if (strstr(bootloader, "I9515")) {
-        /* jfveltexx - GT-i9515 */
-        property_override("ro.build.fingerprint", "samsung/jfveltexx/jfvelte:5.0.1/LRX22C/I9515XXU1BPK3:user/release-keys");
-        property_override("ro.build.description", "jfveltexx-user 5.0.1 LRX22C I9515XXU1BPK3 release-keys");
-        property_override("ro.product.model", "GT-I9515");
-        property_override("ro.product.device", "jfvelte");
-        property_override("ro.product.name", "jfveltexx");
-    } else if (strstr(bootloader, "I9515L")) {
-        /* jfvelteub  - GT-i9515L */
-        property_override("ro.build.fingerprint", "samsung/jfvelteub/jfvelte:5.0.1/LRX22C/I9515LUBU1BPI2:user/release-keys");
-        property_override("ro.build.description", "jfvelteub-user 5.0.1 LRX22C I9515LUBU1BPI2 release-keys");
-        property_override("ro.product.model", "GT-I9515L");
-        property_override("ro.product.device", "jfvelte");
-        property_override("ro.product.name", "jfvelteub");
+    if (bootloader.find("I9515") != std::string::npos) {
+        /* jfveltexx */
+        gsm_properties();
+        property_override_dual("ro.build.fingerprint","ro.vendor.build.fingerprint","samsung/jfveltexx/jfvelte:5.0.1/LRX22C/I9515XXS1BQD2:user/release-keys");
+        property_override("ro.build.description", "jfveltexx-user 5.0.1 LRX22C I9515XXS1BQD2 release-keys");
+        property_override_dual("ro.product.model","ro.vendor.product.model","GT-I9515");
+        property_override_dual("ro.product.device","ro.vendor.product.device", "jfveltexx");
+    } else if (bootloader.find("I9515L") != std::string::npos) {
+        /* jfvelteub */
+        gsm_properties();
+        property_override_dual("ro.build.fingerprint","ro.vendor.build.fingerprint", "samsung/jfvelteub/jfvelte:5.0.1/LRX22C/I9515LUBU1BQF1:user/release-keys");
+        property_override("ro.build.description", "jfvelteub-user 5.0.1 LRX22C I9515LUBU1BQF1 release-keys");
+        property_override_dual("ro.product.model","ro.vendor.product.model", "GT-I9515L");
+        property_override_dual("ro.product.device","ro.vendor.product.device", "jfvelteub");
+    } else {
+        property_override("ro.build.fingerprint","ERROR.INIT FAILED");
     }
+}
 
-    property_get("ro.product.device", device, NULL);
-    strlcpy(devicename, device, sizeof(devicename));
-    ERROR("Found bootloader id %s setting build properties for %s device\n", bootloader, devicename);
-
+void gsm_properties()
+{
+    android::init::property_set("telephony.lteOnGsmDevice", "1");
+    android::init::property_set("ro.telephony.default_network", "9");
+    android::init::property_set("telephony.radioAccessFamily", "gsm");
 }

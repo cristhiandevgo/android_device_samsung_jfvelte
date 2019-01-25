@@ -1,6 +1,5 @@
 #
 # Copyright (C) 2011 The CyanogenMod Project
-# Copyright (C) 2017 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +14,11 @@
 # limitations under the License.
 #
 
-## (2) Also get non-open-source specific aspects if available
-$(call inherit-product-if-exists, vendor/samsung/jf-gsm-common/jf-gsm-common-vendor.mk)
+## (2) Also get non-open-source specific aspects
+$(call inherit-product, vendor/samsung/jf-gsm-common/jf-gsm-common-vendor.mk)
 
-# Inherit from jfvelte
-$(call inherit-product, device/samsung/jfvelte/jfvelte.mk)
+## device overlays
+DEVICE_PACKAGE_OVERLAYS += device/samsung/jfvelte/overlay
+
+# Inherit from jfve-common
+$(call inherit-product, device/samsung/jfve-common/jfve-common.mk)
