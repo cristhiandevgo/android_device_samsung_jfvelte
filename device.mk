@@ -18,7 +18,7 @@
 $(call inherit-product, vendor/samsung/jf-gsm-common/jf-gsm-common-vendor.mk)
 
 ## device overlays
-DEVICE_PACKAGE_OVERLAYS += device/samsung/jfltexx/overlay
+DEVICE_PACKAGE_OVERLAYS += device/samsung/jfvelte/overlay
 
-# Inherit from jf-common
-$(call inherit-product, device/samsung/jf-common/jf-common.mk)
+# Inherit from jfve-common
+$(call inherit-product, device/samsung/jfve-common/jfve-common.mk)

@@ -20,12 +20,12 @@
 # definition file).
 #
 
-# inherit from common jf
-include device/samsung/jf-common/BoardConfigCommon.mk
+# inherit from common jfve
+include device/samsung/jfve-common/BoardConfigCommon.mk
 
 # Assert
-TARGET_OTA_ASSERT_DEVICE := GT-I9505,GT-I9505G,SGH-I337M,SGH-M919,I9505,I9505G,I337M,M919,i9505,i9505g,i337m,m919,jflte,jfltecan,jfltetmo,jfltexx,jgedlte
+TARGET_OTA_ASSERT_DEVICE := GT-I9515,GT-I9515L,I9515,I9515L,i9515,i9515l,jfvelte
 
 # Vendor Init
-TARGET_INIT_VENDOR_LIB := libinit_jfltexx
-TARGET_LIBINIT_DEFINES_FILE := device/samsung/jfltexx/init/init_jfltexx.cpp
+TARGET_INIT_VENDOR_LIB := libinit_jfvelte
+TARGET_LIBINIT_DEFINES_FILE := device/samsung/jfvelte/init/init_jfvelte.cpp
