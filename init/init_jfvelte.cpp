@@ -73,15 +73,15 @@ void vendor_load_properties()
         gsm_properties();
         property_override_dual("ro.build.fingerprint","ro.vendor.build.fingerprint","samsung/jfveltexx/jfvelte:5.0.1/LRX22C/I9515XXS1BQD2:user/release-keys");
         property_override("ro.build.description", "jfveltexx-user 5.0.1 LRX22C I9515XXS1BQD2 release-keys");
-        property_override_dual("ro.product.model","ro.vendor.product.model","GT-I9515");
-        property_override_dual("ro.product.device","ro.vendor.product.device", "jfveltexx");
+        property_override_dual("ro.product.model","ro.product.vendor.model","GT-I9515");
+        property_override_dual("ro.product.device","ro.product.vendor.device", "jfveltexx");
     } else if (bootloader.find("I9515L") != std::string::npos) {
         /* jfvelteub */
         gsm_properties();
         property_override_dual("ro.build.fingerprint","ro.vendor.build.fingerprint", "samsung/jfvelteub/jfvelte:5.0.1/LRX22C/I9515LUBU1BQF1:user/release-keys");
         property_override("ro.build.description", "jfvelteub-user 5.0.1 LRX22C I9515LUBU1BQF1 release-keys");
-        property_override_dual("ro.product.model","ro.vendor.product.model", "GT-I9515L");
-        property_override_dual("ro.product.device","ro.vendor.product.device", "jfvelteub");
+        property_override_dual("ro.product.model","ro.product.vendor.model", "GT-I9515L");
+        property_override_dual("ro.product.device","ro.product.vendor.device", "jfvelteub");
     } else {
         property_override("ro.build.fingerprint","ERROR.INIT FAILED");
     }
