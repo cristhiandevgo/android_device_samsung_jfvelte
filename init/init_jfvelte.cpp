@@ -60,36 +60,45 @@ void vendor_load_properties()
 {
     std::string platform;
     std::string bootloader;
-
+    std::string blgeneral;
+    
     platform = GetProperty("ro.board.platform", "");
 
     if (platform == "")
         return;
 
     bootloader = GetProperty("ro.bootloader", "");
-
-    if (bootloader.find("I9515") != std::string::npos) {
+    blgeneral = bootloader.substr(0,6);
+    
+    //Check the specific bootloader first to set vendor security patch.
+    if (bootloader.find("I9515XXS1BQD2") == 0) {
         /* jfveltexx */
         gsm_properties();
-        property_override_dual("ro.build.fingerprint","ro.vendor.build.fingerprint","samsung/jfveltexx/jfvelte:5.0.1/LRX22C/I9515XXS1BQD2:user/release-keys");
-        property_override("ro.build.description", "jfveltexx-user 5.0.1 LRX22C I9515XXS1BQD2 release-keys");
-        property_override_dual("ro.product.model","ro.vendor.product.model","GT-I9515");
+        property_override_dual("ro.product.model","ro.vendor.product.model", "GT-I9515");
         property_override_dual("ro.product.device","ro.vendor.product.device", "jfveltexx");
-    } else if (bootloader.find("I9515L") != std::string::npos) {
+        property_override("ro.vendor.build.security_patch", "2016-10-01");
+    } else if (bootloader.find("I9515LUBU1BQF1") == 0) {
         /* jfvelteub */
         gsm_properties();
-        property_override_dual("ro.build.fingerprint","ro.vendor.build.fingerprint", "samsung/jfvelteub/jfvelte:5.0.1/LRX22C/I9515LUBU1BQF1:user/release-keys");
-        property_override("ro.build.description", "jfvelteub-user 5.0.1 LRX22C I9515LUBU1BQF1 release-keys");
         property_override_dual("ro.product.model","ro.vendor.product.model", "GT-I9515L");
         property_override_dual("ro.product.device","ro.vendor.product.device", "jfvelteub");
-    } else {
-        property_override("ro.build.fingerprint","ERROR.INIT FAILED");
+        property_override("ro.vendor.build.security_patch", "2017-06-01");
+    } else if (blgeneral.find("I9515X") == 0) {
+        /* General - jfveltexx */
+        gsm_properties();
+        property_override_dual("ro.product.model","ro.vendor.product.model", "GT-I9515");
+        property_override_dual("ro.product.device","ro.vendor.product.device", "jfveltexx");
+    } else if (blgeneral.find("I9515L") == 0) {
+        /* General - jfvelteub */
+        gsm_properties();
+        property_override_dual("ro.product.model","ro.vendor.product.model", "GT-I9515L");
+        property_override_dual("ro.product.device","ro.vendor.product.device", "jfvelteub");
     }
+   
 }
 
 void gsm_properties()
 {
     android::init::property_set("telephony.lteOnGsmDevice", "1");
     android::init::property_set("ro.telephony.default_network", "9");
-    android::init::property_set("telephony.radioAccessFamily", "gsm");
 }
